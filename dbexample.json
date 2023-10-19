@@ -1,0 +1,17 @@
+[
+  {
+    "index": 1,
+    "subject": {
+      "name": "Math",
+      "average": 5.2,
+      "weight": "Principal",
+      "exams": [
+        {
+          "examName": "",
+          "examGrade": 5.2,
+          "coefficient": 2
+        }
+      ]
+    }
+  }
+]
