@@ -7,9 +7,16 @@
       "weight": "Principal",
       "exams": [
         {
-          "examName": "",
+          "examId": "0",
+          "examName": "thème1",
           "examGrade": 5.2,
-          "coefficient": 2
+          "examCoefficient": 1
+        },
+        {
+          "examId": "1",
+          "examName": "thème2",
+          "examGrade": 5.2,
+          "examCoefficient": 2
         }
       ]
     }

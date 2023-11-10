@@ -13,7 +13,7 @@ import {EventRegister} from 'react-native-event-listeners';
 
 
 let newData;
-function SetValues() {
+const SetValues = () => {
   const [subject, setSubject] = React.useState('');
   const [selWeight, setWeight] = React.useState(null);
   newData = {
@@ -22,6 +22,17 @@ function SetValues() {
         weight: selWeight,
       },
     };
+
+  const weight = [
+    {id: 0, label: 'Primary', value: 'Primary'},
+    {id: 1, label: 'Secondary', value: 'Secondary'},
+    {id: 2, label: 'None', value: "empty"}, // cannot set to null
+  ];
+  const placeholder = {
+    label: 'Select...',
+    value: null,
+    color: '#9EA0A4',
+  };
 
   const styles = StyleSheet.create({
     input: {
@@ -50,16 +61,7 @@ function SetValues() {
       shadowOpacity: 0.25,
     },
   });
-  const weight = [
-    {id: 0, label: 'Primary', value: 'Primary'},
-    {id: 1, label: 'Secondary', value: 'Secondary'},
-    {id: 2, label: 'None', value: "empty"}, // cannot set to null
-  ];
-  const placeholder = {
-    label: 'Select...',
-    value: null,
-    color: '#9EA0A4',
-  };
+
 
   return (
     <View style={styles.container}>
@@ -74,6 +76,7 @@ function SetValues() {
           placeholder={placeholder}
           items={weight}
           onValueChange={value => setWeight(value)}
+          value={selWeight}
         />
       </View>
       {Platform.OS === 'ios' && (
@@ -117,6 +120,8 @@ async function addValuesToJSONFile() {
       existingData = JSON.parse(fileContent);
     }
     newData.index = existingData.length
+    newData.subject.exams = []
+    newData.average = null
 
     // Add the new data
     existingData.push(newData);
@@ -129,18 +134,6 @@ async function addValuesToJSONFile() {
     console.error(error);
   }
 }
-
-// async function wipeData() {
-//   try {
-//
-//     // Write an empty array to the file
-//     await FileSystem.writeAsStringAsync(fileURI, JSON.stringify([], null, 2));
-//
-//     console.log("Data wiped successfully");
-//   } catch (error) {
-//     console.error("Error wiping the data:", error);
-//   }
-// }
 
 
 export default SetValues;

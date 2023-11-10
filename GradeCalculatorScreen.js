@@ -45,7 +45,12 @@ const GradeCalculatorScreen = () => {
     <View style={styles.container}>
       <KeyboardAwareScrollView style={{flex: 1}}>
         <View style={styles.switch}>
+          {Platform.OS === 'ios' && (
           <Text style={styles.switchTxt}>Rounded</Text>
+              )}
+          {Platform.OS === 'android' && (
+              <Text style={styles.switchTxtAndroid}>Rounded</Text>
+          )}
           <Switch
             trackColor={{false: '#767577', true: '#5a9dcd'}}
             thumbColor={isEnabled ? '#efb810' : '#f4f3f4'}
@@ -98,6 +103,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
+  },
+  switchTxtAndroid: {
+    paddingTop: 13,
+    fontSize: 15,
   },
   switchTxt: {
     padding: 6,

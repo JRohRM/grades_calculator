@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Platform, StyleSheet, Image, ScrollView} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Settings from './Settings';
 import GradeCalculator from './GradeCalculatorScreen';
-import {Ionicons} from '@expo/vector-icons'; // import the icons
+import {Ionicons} from '@expo/vector-icons';
 import {EventRegister} from 'react-native-event-listeners';
 import {createStackNavigator} from '@react-navigation/stack';
 import Home from './HomeScreen';
@@ -13,6 +13,7 @@ import SetGrades from './SetGrades'
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const header = require('./assets/header.png')
 
 function HomeStack() {
   return (
@@ -32,7 +33,7 @@ function HomeStack() {
           headerBackground: () => (
             <Image
               style={styles.header}
-              source={require('./assets/header.png')}
+              source={header}
             />
           ),
         }}
@@ -59,7 +60,7 @@ const App = () => {
           headerBackground: () => (
             <Image
               style={styles.header}
-              source={require('./assets/header.png')}
+              source={header}
             />
           ),
           tabBarActiveTintColor: '#efb810',

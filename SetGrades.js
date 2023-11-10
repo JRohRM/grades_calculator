@@ -1,36 +1,136 @@
-import React, {useState, useEffect} from 'react';
-import {
-    View,
-    Button,
-    StyleSheet,
-    TextInput,
-    Alert,
-    Platform, Text, ScrollView,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, View,} from 'react-native';
 import {DataTable} from 'react-native-paper';
-import {currentIndex} from './HomeScreen'
 import * as FileSystem from 'expo-file-system';
-import {Ionicons} from "@expo/vector-icons";
+import {currentIndex} from './HomeScreen'
+import {Ionicons} from '@expo/vector-icons';
 
 const jsonFileName = 'database.json';
 const fileURI = `${FileSystem.documentDirectory}${jsonFileName}`;
+let newData
 
+const fetchJSONData = async () => {
+    const fileInfo = await FileSystem.getInfoAsync(fileURI);
+    if (fileInfo.exists) {
+        const fileContent = await FileSystem.readAsStringAsync(fileURI);
+        const parsedData = JSON.parse(fileContent);
+        setJSONData(parsedData);
+    }
+};
 
 function SetGrades() {
 
     const [JSONData, setJSONData] = useState([]);
 
+
+    const fetchJSONData = async () => {
+        const fileInfo = await FileSystem.getInfoAsync(fileURI);
+        if (fileInfo.exists) {
+            const fileContent = await FileSystem.readAsStringAsync(fileURI);
+            const parsedData = JSON.parse(fileContent);
+            setJSONData(parsedData);
+        }
+    };
     useEffect(() => {
-        const fetchJSONData = async () => {
+        fetchJSONData()
+        calculateAverage()
+    }, [])
+
+    const [examName, setExamName] = React.useState("");
+    const [examGrade, setExamGrade] = React.useState(null);
+    const [examCoefficient, setExamCoefficient] = React.useState(null);
+
+    newData = {
+        examName: examName,
+        examGrade: examGrade,
+        examCoefficient: examCoefficient,
+    };
+
+    let coefficient = 0
+    async function calculateAverage() {
+        const fileInfo = await FileSystem.getInfoAsync(fileURI);
+        let existingData = [];
+        if (fileInfo.exists) {
+            // Read the existing JSON file
+            const fileContent = await FileSystem.readAsStringAsync(fileURI);
+            existingData = JSON.parse(fileContent);
+        }
+        try {
+            let average = 0
+            existingData[currentIndex].subject.exams.forEach(exam => {
+                average += (parseFloat(exam.examGrade) * parseFloat(exam.examCoefficient))
+                coefficient += parseFloat(exam.examCoefficient) - 1
+            })
+            average = average / (existingData[currentIndex].subject.exams.length + coefficient)
+            console.log(average)
+            average = Math.round(average * 10) / 10
+            existingData[currentIndex].subject.average = average
+            await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(existingData, null, 2));
+        } catch (error) {
+            Alert.alert('Error', 'Could not calculate your average.');
+        }
+     }
+    async function addValuesToJSONFile() {
+        if (!newData.examName || !newData.examGrade || !newData.examCoefficient) {
+            Alert.alert('Error', 'Please fill all the required fields.');
+            return;
+        }
+        if (newData.examGrade > 6 || newData.examGrade < 1) {
+            Alert.alert('Error', 'Please choose a valid grade')
+            return;
+        }
+
+        try {
+            // Check if the file exists
             const fileInfo = await FileSystem.getInfoAsync(fileURI);
+            let existingData = [];
             if (fileInfo.exists) {
+                // Read the existing JSON file
                 const fileContent = await FileSystem.readAsStringAsync(fileURI);
-                const parsedData = JSON.parse(fileContent);
-                // console.log(parsedData)
-                setJSONData(parsedData);
+                existingData = JSON.parse(fileContent);
             }
-        };
-    })
+            newData.examId = existingData[currentIndex].subject.exams.length
+
+            // Add the new data
+            existingData[currentIndex].subject.exams.push(newData);
+
+            calculateAverage()
+
+            // Write back the updated data
+            await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(existingData, null, 2));
+            setExamName("");
+            setExamGrade(null);
+            setExamCoefficient(null);
+            fetchJSONData();
+        } catch (error) {
+            Alert.alert('Error', 'Failed to update the JSON file.');
+            console.error(error);
+        }
+    }
+
+    const deleteRow = async (id) => {
+        // Filter out the item with the given id
+        const filteredExams = JSONData[currentIndex].subject.exams.filter(item => item.examId !== id);
+
+        // Update the exams array in the original JSON structure
+        JSONData[currentIndex].subject.exams = filteredExams.map(data => {
+            if (data.examId > id) {
+                return {
+                    ...data,
+                    examId: data.examId - 1
+                };
+            }
+            return data;
+        });
+
+        // Save the updated entire JSONData back to the file
+        await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(JSONData, null, 2));
+
+        // Update the local state with entire JSONData
+        setJSONData(JSONData);
+        fetchJSONData()
+    }
+
 
 
     const styles = StyleSheet.create({
@@ -63,42 +163,66 @@ function SetGrades() {
 
     return (
         <View style={styles.container}>
-            <Text style={{fontSize: 22}}>Type in a new exam</Text>
+            <Text style={{fontSize: 22}}>Type in a new exam:</Text>
             <TextInput
                 placeholder="Exam name"
                 style={styles.input}
-                // onChangeText={text => setSubject(text)}
+                onChangeText={text => setExamName(text)}
+                value={examName}
             />
             <TextInput
                 placeholder="Grade"
+                keyboardType="numeric"
                 style={styles.input}
-                // onChangeText={text => setSubject(text)}
+                onChangeText={number => setExamGrade(number)}
+                value={examGrade}
             />
             <TextInput
-                placeholder="Coefficient"
+                placeholder="Coefficient (By default 1 or 2)"
+                keyboardType="numeric"
                 style={styles.input}
-                // onChangeText={text => setSubject(text)}
+                onChangeText={number => setExamCoefficient(number)}
+                value={examCoefficient}
             />
+            {Platform.OS === 'ios' && (
+                <View style={styles.buttonContainer}>
+                    <Button
+                        title="OK"
+                        color="#464648FF"
+                        onPress={addValuesToJSONFile}
+                    />
+                </View>
+            )}
+            {Platform.OS === 'android' && (
+                <Button
+                    title="OK"
+                    color="#EFB810FF"
+                    onPress={addValuesToJSONFile}
+                />
+            )}
             {/*<Text>{currentIndex}</Text>*/}
+            <View paddingVertical={8} />
             <Text style={{fontSize: 22}}>Previous exams:</Text>
             <ScrollView>
                 <DataTable>
-                    {/*{JSONData.length > 0 && JSONData.map((item) => (*/}
-                    {/*    <DataTable.Row key={item.index}>*/}
-                    {/*        <DataTable.Cell>{item.subject.name}</DataTable.Cell>*/}
-                    {/*        <DataTable.Cell style={styles.cell} >{item.subject.weight}</DataTable.Cell>*/}
-                    {/*        <DataTable.Cell style={styles.cell}><Ionicons*/}
-                    {/*            name={"trash-outline"}*/}
-                    {/*            size={20}*/}
-                    {/*            color="black"*/}
-                    {/*            onPress={() => {deleteRow(item.index)}}*/}
-                    {/*        />*/}
-                    {/*        </DataTable.Cell>*/}
-                    {/*    </DataTable.Row>*/}
-                    {/*))}*/}
+                    {JSONData.length > 0 && JSONData[currentIndex].subject.exams.map((item) => (
+                        <DataTable.Row key={item.examId}>
+                            <DataTable.Cell>{item.examName}</DataTable.Cell>
+                            <DataTable.Cell style={styles.cell} >{item.examGrade}</DataTable.Cell>
+                            <DataTable.Cell style={styles.cell}>{item.examCoefficient}</DataTable.Cell>
+                            <DataTable.Cell><Ionicons
+                                name={"trash-outline"}
+                                size={20}
+                                color="black"
+                                onPress={() => {deleteRow(item.examId)}}
+                            /></DataTable.Cell>
+                        </DataTable.Row>
+                    ))}
                 </DataTable>
             </ScrollView>
         </View>
     )
 }
+
+
 export default SetGrades;
