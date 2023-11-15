@@ -37,16 +37,16 @@ const SetValues = () => {
   const styles = StyleSheet.create({
     input: {
       borderColor: 'gray',
+      ...(Platform.OS === 'android' && {height: 50}),
       width: '100%',
       borderWidth: 2,
       borderRadius: 10,
-      padding: 10,
+      padding: Platform.OS === 'android' ? 0 : 10,
       marginVertical: 10,
     },
     container: {
       flex: 1,
       justifyContent: 'center',
-      padding: 16,
     },
     buttonContainer: {
       backgroundColor: '#EFB810FF',
@@ -61,10 +61,10 @@ const SetValues = () => {
       shadowOpacity: 0.25,
     },
     elevatedBox: {
+      margin: 15,
       padding: 20,
       borderRadius: 10,
       backgroundColor: '#fff',
-      // Pour donner l'effet de surélévation
       elevation: 10,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
@@ -80,11 +80,12 @@ const SetValues = () => {
       <View style={styles.elevatedBox}>
       <TextInput
         placeholder="Subject"
-        style={styles.input}
+        placeholderTextColor='#c5c5c7'
+        style={{paddingLeft: 10, ...styles.input }}
         onChangeText={text => setSubject(text)}
       />
       <View paddingVertical={5} />
-      <View style={styles.input}>
+      <View style={{...(Platform.OS === 'android' && {marginBottom: 35}), ...styles.input}}>
         <RNPickerSelect
           placeholder={placeholder}
           items={weight}
@@ -110,7 +111,6 @@ const SetValues = () => {
       )}
       </View>
       </KeyboardAwareScrollView>
-      {/*<Button onPres={wipeData} color={"red"} title={"Wipe Data"}></Button>*/}
     </View>
   );
 }

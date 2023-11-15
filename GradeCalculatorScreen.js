@@ -85,11 +85,13 @@ const GradeCalculatorScreen = () => {
           </View>
         )}
         {Platform.OS === 'android' && (
+            <View style={{marginVertical: 10}}>
           <Button
             title="Calculate Grade"
-            color="#464648FF"
+            color="#efb810"
             onPress={calculateGrade}
           />
+            </View>
         )}
 
         {grade && <Text style={styles.gradeText}>Your Grade: {grade}</Text>}
@@ -101,10 +103,8 @@ const GradeCalculatorScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 30,
     flex: 1,
     justifyContent: 'center',
-    padding: 16,
   },
   switchTxtAndroid: {
     paddingTop: 13,
@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
   },
   elevatedBox: {
+    margin: 15,
     padding: 20,
     borderRadius: 10,
     backgroundColor: '#fff',
