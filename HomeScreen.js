@@ -14,6 +14,9 @@ let currentIndex
 
 function Home({ navigation }) {
     const [JSONData, setJSONData] = useState([]);
+    let primaryExists = false
+    let secondaryExists = false
+    let noneExists = false
 
 
     useEffect(() => {
@@ -38,7 +41,6 @@ function Home({ navigation }) {
             }
         };
         fetchJSONData()
-        console.log('Screen is focused, refreshing data...');
     }, []);
 
     useFocusEffect(
@@ -56,7 +58,6 @@ function Home({ navigation }) {
     }
 
     const deleteRow = async (id) => {
-        // filter out the item with the given id
         const updatedData = JSONData.filter(item => item.index !== id);
         JSONData.forEach(data => {
             if (data.index > id) {
@@ -64,11 +65,8 @@ function Home({ navigation }) {
             }
         })
 
-
-        // save the updated data back to the file
         await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(updatedData, null, 2));
 
-        // update the local state
         setJSONData(updatedData);
     }
     const showConfirmDialog = (index) => {
@@ -82,7 +80,6 @@ function Home({ navigation }) {
                         deleteRow(index);
                     },
                 },
-                // Does nothing but dismiss the dialog when tapped
                 {
                     text: "No",
                 },
@@ -95,25 +92,57 @@ function Home({ navigation }) {
             <DataTable>
                 <DataTable.Header>
                     <DataTable.Title>Subject</DataTable.Title>
-                    <DataTable.Title style={styles.cell}>Coefficient</DataTable.Title>
+                    {/*<DataTable.Title style={styles.cell}>Weight</DataTable.Title>*/}
                     <DataTable.Title style={styles.cell} numeric>Average</DataTable.Title>
                     <DataTable.Title></DataTable.Title>
                 </DataTable.Header>
                 <ScrollView flexBasis={500}>
-                {JSONData.length > 0 && JSONData.map((item) => (
-                    <DataTable.Row key={item.index} onPress={() => {goToSetGrades(item.index)}}>
-                        <DataTable.Cell >{item.subject.name}</DataTable.Cell>
-                        <DataTable.Cell style={styles.cell}>{item.subject.weight}</DataTable.Cell>
-                        <DataTable.Cell style={styles.cell} numeric>{item.subject.average}</DataTable.Cell>
-                        <DataTable.Cell style={styles.cell}><Ionicons
-                            name={"trash-outline"}
-                            size={20}
-                            color="black"
-                            onPress={() => {showConfirmDialog(item.index)}}
-                        />
-                        </DataTable.Cell>
-                    </DataTable.Row>
-                ))}
+                    <DataTable.Header style={styles.weight}>
+                        <DataTable.Title style={styles.weightTitle}>Primary</DataTable.Title>
+                    </DataTable.Header>
+                    {
+                        JSONData.length > 0 && JSONData.map((item) => (
+                            item.subject.weight === 'Primary' && (
+                                <DataTable.Row key={item.index} onPress={() => { goToSetGrades(item.index) }}>
+                                    <DataTable.Cell>{item.subject.name}</DataTable.Cell>
+                                    {/*<DataTable.Cell style={styles.cell}>{item.subject.weight}</DataTable.Cell>*/}
+                                    <DataTable.Cell style={styles.cell} numeric>{item.subject.average}</DataTable.Cell>
+                                    <DataTable.Cell style={styles.trash}>
+                                        <Ionicons
+                                            name={"trash-outline"}
+                                            size={20}
+                                            color="black"
+                                            onPress={() => { showConfirmDialog(item.index) }}
+                                        />
+                                    </DataTable.Cell>
+                                </DataTable.Row>
+                            )
+
+                        ))
+                    }
+                    <DataTable.Header style={styles.weight}>
+                        <DataTable.Title style={styles.weightTitle}>Secondary</DataTable.Title>
+                    </DataTable.Header>
+                    {
+                        JSONData.length > 0 && JSONData.map((item) => (
+                            item.subject.weight === 'Secondary' && (
+                                <DataTable.Row key={item.index} onPress={() => { goToSetGrades(item.index) }}>
+                                    <DataTable.Cell>{item.subject.name}</DataTable.Cell>
+                                    {/*<DataTable.Cell style={styles.cell}>{item.subject.weight}</DataTable.Cell>*/}
+                                    <DataTable.Cell style={styles.cell} numeric>{item.subject.average}</DataTable.Cell>
+                                    <DataTable.Cell style={styles.trash}>
+                                        <Ionicons
+                                            name={"trash-outline"}
+                                            size={20}
+                                            color="black"
+                                            onPress={() => { showConfirmDialog(item.index) }}
+                                        />
+                                    </DataTable.Cell>
+                                </DataTable.Row>
+                            )
+
+                        ))
+                    }
                 </ScrollView>
             </DataTable>
         </View>
@@ -129,7 +158,22 @@ const styles = StyleSheet.create({
     cell: {
         flex: 1,
         justifyContent: "center",
-    }
+    },
+    weight: {
+        backgroundColor: '#c5c5c5',
+        height: 25,
+    },
+    weightTitle: {
+        fontSize: 10,
+        position: 'absolute',
+        top: -11,
+        left: 15,
+        right: 0,
+    },
+    trash: {
+        flex: 1,
+        justifyContent: "flex-end"
+    },
 });
 
 export { currentIndex }

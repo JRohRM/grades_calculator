@@ -10,6 +10,7 @@ import {
 import RNPickerSelect from 'react-native-picker-select';
 import * as FileSystem from 'expo-file-system';
 import {EventRegister} from 'react-native-event-listeners';
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 
 let newData;
@@ -26,7 +27,6 @@ const SetValues = () => {
   const weight = [
     {id: 0, label: 'Primary', value: 'Primary'},
     {id: 1, label: 'Secondary', value: 'Secondary'},
-    {id: 2, label: 'None', value: "empty"}, // cannot set to null
   ];
   const placeholder = {
     label: 'Select...',
@@ -60,11 +60,24 @@ const SetValues = () => {
       shadowRadius: 10,
       shadowOpacity: 0.25,
     },
+    elevatedBox: {
+      padding: 20,
+      borderRadius: 10,
+      backgroundColor: '#fff',
+      // Pour donner l'effet de surélévation
+      elevation: 10,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+    },
   });
 
 
   return (
     <View style={styles.container}>
+      <KeyboardAwareScrollView>
+      <View style={styles.elevatedBox}>
       <TextInput
         placeholder="Subject"
         style={styles.input}
@@ -95,6 +108,8 @@ const SetValues = () => {
             onPress={addValuesToJSONFile}
         />
       )}
+      </View>
+      </KeyboardAwareScrollView>
       {/*<Button onPres={wipeData} color={"red"} title={"Wipe Data"}></Button>*/}
     </View>
   );

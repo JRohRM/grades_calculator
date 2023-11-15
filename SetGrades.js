@@ -62,7 +62,6 @@ function SetGrades() {
                 coefficient += parseFloat(exam.examCoefficient) - 1
             })
             average = average / (existingData[currentIndex].subject.exams.length + coefficient)
-            console.log(average)
             average = Math.round(average * 10) / 10
             existingData[currentIndex].subject.average = average
             await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(existingData, null, 2));
@@ -159,10 +158,30 @@ function SetGrades() {
             shadowRadius: 10,
             shadowOpacity: 0.25,
         },
+        elevatedBox: {
+            padding: 20,
+            borderRadius: 10,
+            backgroundColor: '#fff',
+            // Pour donner l'effet de surélévation
+            elevation: 10,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+        },
+        cell: {
+            flex: 1,
+            justifyContent: "center"
+        },
+        trash: {
+            flex: 1,
+            justifyContent: "flex-end"
+        },
     });
 
     return (
         <View style={styles.container}>
+                <View style={styles.elevatedBox}>
             <Text style={{fontSize: 22}}>Type in a new exam:</Text>
             <TextInput
                 placeholder="Exam name"
@@ -200,17 +219,24 @@ function SetGrades() {
                     onPress={addValuesToJSONFile}
                 />
             )}
+                </View>
             {/*<Text>{currentIndex}</Text>*/}
             <View paddingVertical={8} />
             <Text style={{fontSize: 22}}>Previous exams:</Text>
-            <ScrollView>
                 <DataTable>
+                    <DataTable.Header>
+                        <DataTable.Title>Exam name</DataTable.Title>
+                        <DataTable.Title style={styles.cell}>Grade</DataTable.Title>
+                        <DataTable.Title style={styles.cell} numeric>Coefficient</DataTable.Title>
+                        <DataTable.Title></DataTable.Title>
+                    </DataTable.Header>
+                    <ScrollView flexBasis={500}>
                     {JSONData.length > 0 && JSONData[currentIndex].subject.exams.map((item) => (
                         <DataTable.Row key={item.examId}>
                             <DataTable.Cell>{item.examName}</DataTable.Cell>
                             <DataTable.Cell style={styles.cell} >{item.examGrade}</DataTable.Cell>
                             <DataTable.Cell style={styles.cell}>{item.examCoefficient}</DataTable.Cell>
-                            <DataTable.Cell><Ionicons
+                            <DataTable.Cell style={styles.trash}><Ionicons
                                 name={"trash-outline"}
                                 size={20}
                                 color="black"
@@ -218,8 +244,8 @@ function SetGrades() {
                             /></DataTable.Cell>
                         </DataTable.Row>
                     ))}
+                    </ScrollView>
                 </DataTable>
-            </ScrollView>
         </View>
     )
 }

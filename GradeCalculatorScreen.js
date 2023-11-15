@@ -44,6 +44,7 @@ const GradeCalculatorScreen = () => {
   return (
     <View style={styles.container}>
       <KeyboardAwareScrollView style={{flex: 1}}>
+        <View style={styles.elevatedBox}>
         <View style={styles.switch}>
           {Platform.OS === 'ios' && (
           <Text style={styles.switchTxt}>Rounded</Text>
@@ -92,6 +93,7 @@ const GradeCalculatorScreen = () => {
         )}
 
         {grade && <Text style={styles.gradeText}>Your Grade: {grade}</Text>}
+        </View>
       </KeyboardAwareScrollView>
     </View>
   );
@@ -146,6 +148,17 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 10,
     shadowOpacity: 0.25,
+  },
+  elevatedBox: {
+    padding: 20,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    // Pour donner l'effet de surélévation
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });
 

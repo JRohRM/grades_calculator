@@ -30,12 +30,15 @@ function HomeStack() {
                           onPress={() => {EventRegister.emit('goToSetValues')}
                 }/>
             ),
-          headerBackground: () => (
-            <Image
-              style={styles.header}
-              source={header}
-            />
-          ),
+            headerStyle: {
+                backgroundColor: '#efb810', // #5a9dcd
+            },
+          // headerBackground: () => (
+            // <Image
+            //   style={styles.header}
+            //   source={header}
+            // />
+          // ),
         }}
       />
         <Stack.Screen name="Grades" component={SetGrades} />
@@ -57,12 +60,15 @@ const App = () => {
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({route}) => ({
-          headerBackground: () => (
-            <Image
-              style={styles.header}
-              source={header}
-            />
-          ),
+            headerStyle: {
+                backgroundColor: '#efb810',
+            },
+          // headerBackground: () => (
+          //   <Image
+          //     style={styles.header}
+          //     source={header}
+          //   />
+          // ),
           tabBarActiveTintColor: '#efb810',
           tabBarInactiveTintColor: 'black',
           tabBarStyle: [
