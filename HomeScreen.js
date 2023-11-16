@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {ScrollView, View, Button, StyleSheet, Alert, Text} from 'react-native';
+import {ScrollView, View, ImageBackground, StyleSheet, Alert, Text, TouchableOpacity} from 'react-native';
 import {DataTable} from 'react-native-paper';
 import {Ionicons} from '@expo/vector-icons';
 import {EventRegister} from 'react-native-event-listeners';
@@ -9,6 +9,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const jsonFileName = 'database.json';
 const fileURI = `${FileSystem.documentDirectory}${jsonFileName}`;
+const source = require('./assets/graph.png')
 
 let currentIndex
 
@@ -56,6 +57,9 @@ function Home({ navigation }) {
         navigation.navigate('Grades')
         currentIndex = index
     }
+    const goToGraph = () => {
+        navigation.navigate('Monitoring')
+    }
 
     const deleteRow = async (id) => {
         const updatedData = JSONData.filter(item => item.index !== id);
@@ -92,11 +96,10 @@ function Home({ navigation }) {
             <DataTable>
                 <DataTable.Header>
                     <DataTable.Title>Subject</DataTable.Title>
-                    {/*<DataTable.Title style={styles.cell}>Weight</DataTable.Title>*/}
                     <DataTable.Title style={styles.cell} numeric>Average</DataTable.Title>
                     <DataTable.Title></DataTable.Title>
                 </DataTable.Header>
-                <ScrollView flexBasis={500}>
+                <ScrollView flexBasis={'50%'}>
                     <DataTable.Header style={styles.weight}>
                         <DataTable.Title style={styles.weightTitle}>Primary</DataTable.Title>
                     </DataTable.Header>
@@ -105,7 +108,6 @@ function Home({ navigation }) {
                             item.subject.weight === 'Primary' && (
                                 <DataTable.Row key={item.index} onPress={() => { goToSetGrades(item.index) }}>
                                     <DataTable.Cell>{item.subject.name}</DataTable.Cell>
-                                    {/*<DataTable.Cell style={styles.cell}>{item.subject.weight}</DataTable.Cell>*/}
                                     <DataTable.Cell style={styles.cell} numeric>{item.subject.average}</DataTable.Cell>
                                     <DataTable.Cell style={styles.trash}>
                                         <Ionicons
@@ -128,7 +130,6 @@ function Home({ navigation }) {
                             item.subject.weight === 'Secondary' && (
                                 <DataTable.Row key={item.index} onPress={() => { goToSetGrades(item.index) }}>
                                     <DataTable.Cell>{item.subject.name}</DataTable.Cell>
-                                    {/*<DataTable.Cell style={styles.cell}>{item.subject.weight}</DataTable.Cell>*/}
                                     <DataTable.Cell style={styles.cell} numeric>{item.subject.average}</DataTable.Cell>
                                     <DataTable.Cell style={styles.trash}>
                                         <Ionicons
@@ -145,6 +146,19 @@ function Home({ navigation }) {
                     }
                 </ScrollView>
             </DataTable>
+            <View style={styles.elevatedBox}>
+                <ImageBackground
+                    source={source}
+                    style={styles.image}
+                    blurRadius={5} // Adjust the blur radius as needed
+                    borderRadius={10}
+                >
+                    {/* You can add additional content over the image here if needed */}
+                </ImageBackground>
+                <TouchableOpacity onPress={() => {goToGraph()}} style={styles.textContainer}>
+                    <Text>Monitoring</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -173,6 +187,37 @@ const styles = StyleSheet.create({
     trash: {
         flex: 1,
         justifyContent: "flex-end"
+    },
+    elevatedBox: {
+        width: '90%',
+        height: '35%',
+        margin: 15,
+        padding: 20,
+        borderRadius: 10,
+        backgroundColor: '#fff',
+        elevation: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    image: {
+        width: '100%',
+        height: '90%',
+        radius: 10,
+    },
+    textContainer: {
+        position: "absolute",
+        bottom: 0,
+        backgroundColor: '#efb810',
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
+        width: '112.7%',
+        height: '25%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
     },
 });
 

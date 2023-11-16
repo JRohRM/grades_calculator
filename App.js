@@ -10,6 +10,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Home from './HomeScreen';
 import SetValues from './SetValues';
 import SetGrades from './SetGrades'
+import GraphScreen from "./GraphScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -43,6 +44,7 @@ function HomeStack() {
       />
         <Stack.Screen name="Grades" component={SetGrades} />
       <Stack.Screen name="Set Values" component={SetValues} />
+        <Stack.Screen name="Monitoring" component={GraphScreen} />
     </Stack.Navigator>
   );
 }

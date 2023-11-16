@@ -154,7 +154,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     backgroundColor: '#fff',
-    // Pour donner l'effet de surélévation
     elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
