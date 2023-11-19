@@ -15,9 +15,6 @@ let currentIndex
 
 function Home({ navigation }) {
     const [JSONData, setJSONData] = useState([]);
-    let primaryExists = false
-    let secondaryExists = false
-    let noneExists = false
 
 
     useEffect(() => {

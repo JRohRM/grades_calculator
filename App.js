@@ -11,6 +11,7 @@ import Home from './HomeScreen';
 import SetValues from './SetValues';
 import SetGrades from './SetGrades'
 import GraphScreen from "./GraphScreen";
+import SetCalculatedGrades from "./SetCalculatedGrades";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,6 +48,27 @@ function HomeStack() {
         <Stack.Screen name="Monitoring" component={GraphScreen} />
     </Stack.Navigator>
   );
+}
+
+function GradeCalculatorStack() {
+    return(
+        <Stack.Navigator>
+            <Stack.Screen
+            name="Grade Calculator"
+            component={GradeCalculator}
+            options={{
+            headerStyle: {
+                backgroundColor: '#efb810', // #5a9dcd
+            },
+        }}
+            />
+            <Stack.Screen
+                name="Calculated Grades"
+                component={SetCalculatedGrades}
+                options={{tabBarShowLabel: false}}
+            />
+        </Stack.Navigator>
+    );
 }
 const styles = StyleSheet.create({
   header: {
@@ -86,7 +108,7 @@ const App = () => {
             if (Platform.OS === 'ios') {
               if (route.name === 'HomeStack') {
                 iconName = focused ? 'home' : 'home-outline';
-              } else if (route.name === 'Grade Calculator') {
+              } else if (route.name === 'GradeCalculatorStack') {
                 iconName = focused ? 'calculator' : 'calculator-outline';
               } else if (route.name === 'Settings') {
                 iconName = focused ? 'cog-sharp' : 'cog-outline';
@@ -94,7 +116,7 @@ const App = () => {
             } else {
               if (route.name === 'HomeStack') {
                 iconName = focused ? 'home-sharp' : 'home-outline';
-              } else if (route.name === 'Grade Calculator') {
+              } else if (route.name === 'GradeCalculatorStack') {
                 iconName = focused ? 'calculator' : 'calculator-outline';
               } else if (route.name === 'Settings') {
                 iconName = focused ? 'settings-sharp' : 'settings-outline';
@@ -113,9 +135,12 @@ const App = () => {
           }}
         />
         <Tab.Screen
-          name="Grade Calculator"
-          component={GradeCalculator}
-          options={{tabBarLabel: 'Calculator'}}
+          name="GradeCalculatorStack"
+          component={GradeCalculatorStack}
+          options={{
+              tabBarLabel: 'Calculator',
+              headerShown: false,
+        }}
         />
         <Tab.Screen
           name="Settings"

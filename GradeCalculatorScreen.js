@@ -8,16 +8,20 @@ import {
   Switch,
   Platform,
 } from 'react-native';
+import * as FileSystem from 'expo-file-system';
+const jsonFileName = 'database.json';
+const fileURI = `${FileSystem.documentDirectory}${jsonFileName}`;
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-const GradeCalculatorScreen = () => {
+const GradeCalculatorScreen = ({ navigation }) => {
   const [maxPoints, setMaxPoints] = useState('');
   const [obtainedPoints, setObtainedPoints] = useState('');
   const [grade, setGrade] = useState(null);
   const [isEnabled, setIsEnabled] = useState(true);
+  const [isDisplayed, setIsDisplayed] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-  const calculateGrade = () => {
+  const calculateGrade = async ({ navigation }) => {
     if (isNaN(parseFloat(maxPoints)) || isNaN(parseFloat(obtainedPoints))) {
       if (!maxPoints || !obtainedPoints) {
         alert('Please input both maximum and obtained points.');
@@ -31,6 +35,19 @@ const GradeCalculatorScreen = () => {
       alert('Obtained points cannot be greater than maximum points.');
       return;
     }
+    const checkIfFileIsEmpty = async () => {
+      try {
+        // Read the contents of the file
+        const fileContents = await FileSystem.readAsStringAsync(fileURI);
+
+        // Check if the file is empty or contains an empty array
+        return fileContents === '[]';
+      } catch (error) {
+        console.error('Error reading the file:', error);
+        return false;
+      }
+    };
+    const isFileEmpty = await checkIfFileIsEmpty()
 
     let notRoundedCalculatedGrade =
       Math.round(
@@ -39,7 +56,17 @@ const GradeCalculatorScreen = () => {
     let calculatedGrade = Math.round(notRoundedCalculatedGrade * 10) / 10;
 
     setGrade(isEnabled ? calculatedGrade : notRoundedCalculatedGrade);
+    setIsDisplayed((isEnabled ? calculatedGrade : notRoundedCalculatedGrade) !== null && !isFileEmpty);
   };
+
+  const goToSetCalculatedGrades = () => {
+    navigation.navigate('Calculated Grades', { grade: Math.round(grade * 10) / 10 })
+  }
+
+  const addGrade = () => {
+    console.log("hello World")
+    goToSetCalculatedGrades()
+  }
 
   return (
     <View style={styles.container}>
@@ -84,6 +111,7 @@ const GradeCalculatorScreen = () => {
             />
           </View>
         )}
+
         {Platform.OS === 'android' && (
             <View style={{marginVertical: 10}}>
           <Button
@@ -95,6 +123,31 @@ const GradeCalculatorScreen = () => {
         )}
 
         {grade && <Text style={styles.gradeText}>Your Grade: {grade}</Text>}
+
+          {Platform.OS === 'ios' && (
+              isDisplayed === true && (
+                  <View style={{marginVertical: 10, ...(styles.buttonContainer)}}>
+                    <Button
+                        title="Add this grade to the list?"
+                        color="#464648FF"
+                        onPress={addGrade}
+                    />
+                  </View>
+              )
+            )}
+
+          {Platform.OS === 'android' && (
+              isDisplayed && (
+                  <View style={{marginVertical: 10}}>
+                    <Button
+                      title="addGrade"
+                      color="#efb810"
+                      onPress={addGrade}
+                      >Add this grade to the list?
+                    </Button>
+                  </View>
+              )
+          )}
         </View>
       </KeyboardAwareScrollView>
     </View>
