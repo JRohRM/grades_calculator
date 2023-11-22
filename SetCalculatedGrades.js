@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, View,} from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import RNPickerSelect from 'react-native-picker-select';
-import {currentIndex} from "./HomeScreen";
 const jsonFileName = 'database.json';
 const fileURI = `${FileSystem.documentDirectory}${jsonFileName}`;
 let newData
@@ -28,7 +27,6 @@ function SetCalculatedGrades({navigation, route}) {
     useEffect(() => {
         setExamGrade(grade)
         fetchJSONData()
-        calculateAverage()
     }, [])
 
     newData = {
@@ -48,15 +46,16 @@ function SetCalculatedGrades({navigation, route}) {
         }
         try {
             let average = 0
-            existingData[currentIndex].subject.exams.forEach(exam => {
+            existingData[selSubject].subject.exams.forEach(exam => {
                 average += (parseFloat(exam.examGrade) * parseFloat(exam.examCoefficient))
                 coefficient += parseFloat(exam.examCoefficient) - 1
             })
-            average = average / (existingData[currentIndex].subject.exams.length + coefficient)
+            average = average / (existingData[selSubject].subject.exams.length + coefficient)
             average = Math.round(average * 10) / 10
-            existingData[currentIndex].subject.average = average
+            existingData[selSubject].subject.average = average
             await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(existingData, null, 2));
         } catch (error) {
+            console.error(error)
             Alert.alert('Error', 'Could not calculate your average.');
         }
     }

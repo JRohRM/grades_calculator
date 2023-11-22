@@ -21,7 +21,7 @@ const GradeCalculatorScreen = ({ navigation }) => {
   const [isDisplayed, setIsDisplayed] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-  const calculateGrade = async ({ navigation }) => {
+  const calculateGrade = async () => {
     if (isNaN(parseFloat(maxPoints)) || isNaN(parseFloat(obtainedPoints))) {
       if (!maxPoints || !obtainedPoints) {
         alert('Please input both maximum and obtained points.');
@@ -36,15 +36,23 @@ const GradeCalculatorScreen = ({ navigation }) => {
       return;
     }
     const checkIfFileIsEmpty = async () => {
-      try {
-        // Read the contents of the file
-        const fileContents = await FileSystem.readAsStringAsync(fileURI);
+      const fileInfo = await FileSystem.getInfoAsync(fileURI);
+      if (fileInfo.exists) {
+        try {
+          // Read the contents of the file
+          const fileContents = await FileSystem.readAsStringAsync(fileURI);
 
-        // Check if the file is empty or contains an empty array
-        return fileContents === '[]';
-      } catch (error) {
-        console.error('Error reading the file:', error);
-        return false;
+          // Check if the file is empty or contains an empty array
+          return fileContents === '[]';
+        } catch (error) {
+          console.error('Error reading the file:', error);
+          return false;
+        }
+      }
+      else {
+        await FileSystem.writeAsStringAsync(fileURI, JSON.stringify([], null, 2));
+        console.log(JSON.parse(await FileSystem.readAsStringAsync(fileURI)))
+        return true
       }
     };
     const isFileEmpty = await checkIfFileIsEmpty()
