@@ -11,12 +11,48 @@ import RNPickerSelect from 'react-native-picker-select';
 import * as FileSystem from 'expo-file-system';
 import {EventRegister} from 'react-native-event-listeners';
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
+import {currentIndex} from './HomeScreen'
+const jsonFileName = 'database.json';
+const fileURI = `${FileSystem.documentDirectory}${jsonFileName}`;
+import {useCallback, useEffect, useState} from "react";
+import {useFocusEffect} from "@react-navigation/native";
 
 
 let newData;
 const SetValues = () => {
-  const [subject, setSubject] = React.useState('');
-  const [selWeight, setWeight] = React.useState(null);
+  const [subject, setSubject] = useState('');
+  const [selWeight, setWeight] = useState(null);
+  const [JSONData, setJSONData] = useState([]);
+
+  const refreshData = useCallback(() => {
+    const fetchJSONData = async () => {
+      const fileInfo = await FileSystem.getInfoAsync(fileURI);
+      if (fileInfo.exists) {
+        const fileContent = await FileSystem.readAsStringAsync(fileURI);
+        const parsedData = JSON.parse(fileContent);
+        setJSONData(parsedData);
+      }
+    };
+    fetchJSONData()
+  }, []);
+
+  useFocusEffect(
+      useCallback(() => {
+        refreshData();
+      }, [refreshData])
+  );
+
+  useEffect(() => {
+    if (currentIndex !== undefined && JSONData.length > 0) {
+      updateSubjectAndWeight();
+    }
+  }, [JSONData, currentIndex]);  // Add JSONData and currentIndex as dependencies
+
+  const updateSubjectAndWeight = () => {
+    setWeight(JSONData[currentIndex].subject.weight);
+    setSubject(JSONData[currentIndex].subject.name);
+  };
+
   newData = {
       subject: {
         name: subject,
@@ -78,12 +114,13 @@ const SetValues = () => {
     <View style={styles.container}>
       <KeyboardAwareScrollView>
       <View style={styles.elevatedBox}>
-      <TextInput
-        placeholder="Subject"
-        placeholderTextColor='#c5c5c7'
-        style={{paddingLeft: 10, ...styles.input }}
-        onChangeText={text => setSubject(text)}
-      />
+        <TextInput
+            placeholder="Subject"
+            placeholderTextColor='#c5c5c7'
+            value={subject}
+            style={{paddingLeft: 10, ...styles.input }}
+            onChangeText={text => setSubject(text)}
+        />
       <View paddingVertical={5} />
       <View style={{...(Platform.OS === 'android' && {marginBottom: 35}), ...styles.input}}>
         <RNPickerSelect
@@ -115,35 +152,35 @@ const SetValues = () => {
   );
 }
 
-const jsonFileName = 'database.json';
-const fileURI = `${FileSystem.documentDirectory}${jsonFileName}`;
 
 async function addValuesToJSONFile() {
-  // Check if the required values are set
   if (!newData.subject.name || !newData.subject.weight) {
     Alert.alert('Error', 'Please fill all the required fields.');
     return;
   }
 
   try {
-    // Check if the file exists
     const fileInfo = await FileSystem.getInfoAsync(fileURI);
     let existingData = [];
     if (fileInfo.exists) {
-      // Read the existing JSON file
       const fileContent = await FileSystem.readAsStringAsync(fileURI);
       existingData = JSON.parse(fileContent);
     }
-    newData.index = existingData.length
-    newData.subject.exams = []
-    newData.average = null
 
-    // Add the new data
-    existingData.push(newData);
+    if (currentIndex !== undefined) {
+      const existingSubject = existingData[currentIndex].subject;
 
-    // Write back the updated data
+      existingSubject.name = newData.subject.name;
+      existingSubject.weight = newData.subject.weight;
+    } else {
+      newData.index = existingData.length;
+      newData.subject.exams = [];
+      newData.average = null;
+      existingData.push(newData);
+    }
+
     await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(existingData, null, 2));
-    EventRegister.emit('goBackHome')
+    EventRegister.emit('goBackHome');
   } catch (error) {
     Alert.alert('Error', 'Failed to update the JSON file.');
     console.error(error);

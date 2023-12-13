@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {ScrollView, View, ImageBackground, StyleSheet, Alert, Text, TouchableOpacity} from 'react-native';
+import {ScrollView, View, ImageBackground, StyleSheet, Alert, Text, TouchableOpacity, Animated} from 'react-native';
 import {DataTable} from 'react-native-paper';
 import {Ionicons} from '@expo/vector-icons';
 import {EventRegister} from 'react-native-event-listeners';
@@ -25,6 +25,7 @@ function Home({ navigation }) {
 
         EventRegister.addEventListener('goToSetValues', () => {
             navigation.navigate('Set Values');
+            currentIndex = undefined
         });
 
     }, [navigation]);
@@ -53,6 +54,10 @@ function Home({ navigation }) {
     const goToSetGrades = (index) => {
         navigation.navigate('Grades')
         currentIndex = index
+    }
+    const editSubject = (index) => {
+        currentIndex = index
+        navigation.navigate('Set Values')
     }
     const goToGraph = () => {
         navigation.navigate('Monitoring')
@@ -103,7 +108,7 @@ function Home({ navigation }) {
                     {
                         JSONData.length > 0 && JSONData.map((item) => (
                             item.subject.weight === 'Primary' && (
-                                <DataTable.Row key={item.index} onPress={() => { goToSetGrades(item.index) }}>
+                                <DataTable.Row key={item.index} onLongPress={() => {editSubject(item.index)}} onPress={() => { goToSetGrades(item.index) }}>
                                     <DataTable.Cell>{item.subject.name}</DataTable.Cell>
                                     <DataTable.Cell style={styles.cell} numeric>{item.subject.average}</DataTable.Cell>
                                     <DataTable.Cell style={styles.trash}>
@@ -125,7 +130,7 @@ function Home({ navigation }) {
                     {
                         JSONData.length > 0 && JSONData.map((item) => (
                             item.subject.weight === 'Secondary' && (
-                                <DataTable.Row key={item.index} onPress={() => { goToSetGrades(item.index) }}>
+                                <DataTable.Row key={item.index} onLongPress={() => {editSubject(item.index)}} onPress={() => { goToSetGrades(item.index) }}>
                                     <DataTable.Cell>{item.subject.name}</DataTable.Cell>
                                     <DataTable.Cell style={styles.cell} numeric>{item.subject.average}</DataTable.Cell>
                                     <DataTable.Cell style={styles.trash}>
