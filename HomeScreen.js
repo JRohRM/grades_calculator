@@ -15,6 +15,9 @@ let currentIndex
 
 function Home({ navigation }) {
     const [JSONData, setJSONData] = useState([]);
+    const [primaryAvg, setPrimaryAvg] = useState("N/A");
+    const [secondaryAvg, setSecondaryAvg] = useState("N/A");
+    const [globalAvg, setGlobalAvg] = useState("N/A");
 
 
     useEffect(() => {
@@ -30,6 +33,35 @@ function Home({ navigation }) {
 
     }, [navigation]);
 
+    const calculateAverages = (data) => {
+        let primaryTotal = 0;
+        let secondaryTotal = 0;
+        let globalTotal = 0;
+        let primaryCount = 0;
+        let secondaryCount = 0;
+        let globalCount = 0;
+
+        data.forEach(item => {
+            const avg = item.subject.average;
+            if (item.subject.weight === 'Primary' && avg !== "N/A") {
+                primaryTotal += avg;
+                primaryCount++;
+            }
+            if (item.subject.weight === 'Secondary' && avg !== "N/A") {
+                secondaryTotal += avg;
+                secondaryCount++;
+            }
+            if (avg !== "N/A") {
+                globalTotal += avg;
+                globalCount++;
+            }
+        });
+
+        setPrimaryAvg(primaryCount > 0 ? (primaryTotal / primaryCount).toFixed(2) : "N/A");
+        setSecondaryAvg(secondaryCount > 0 ? (secondaryTotal / secondaryCount).toFixed(2) : "N/A");
+        setGlobalAvg(globalCount > 0 ? (globalTotal / globalCount).toFixed(2) : "N/A");
+    };
+
     const refreshData = useCallback(() => {
         const fetchJSONData = async () => {
             const fileInfo = await FileSystem.getInfoAsync(fileURI);
@@ -37,6 +69,7 @@ function Home({ navigation }) {
                 const fileContent = await FileSystem.readAsStringAsync(fileURI);
                 const parsedData = JSON.parse(fileContent);
                 setJSONData(parsedData);
+                calculateAverages(parsedData);
             }
         };
         fetchJSONData()
@@ -104,6 +137,7 @@ function Home({ navigation }) {
                 <ScrollView flexBasis={'50%'}>
                     <DataTable.Header style={styles.weight}>
                         <DataTable.Title style={styles.weightTitle}>Primary</DataTable.Title>
+                        <DataTable.Title style={styles.average}>{primaryAvg}</DataTable.Title>
                     </DataTable.Header>
                     {
                         JSONData.length > 0 && JSONData.map((item) => (
@@ -126,6 +160,7 @@ function Home({ navigation }) {
                     }
                     <DataTable.Header style={styles.weight}>
                         <DataTable.Title style={styles.weightTitle}>Secondary</DataTable.Title>
+                        <DataTable.Title style={styles.average}>{secondaryAvg}</DataTable.Title>
                     </DataTable.Header>
                     {
                         JSONData.length > 0 && JSONData.map((item) => (
@@ -146,6 +181,9 @@ function Home({ navigation }) {
 
                         ))
                     }
+                    <DataTable.Header style={styles.weight}>
+                        <DataTable.Title style={styles.average}>{globalAvg}</DataTable.Title>
+                    </DataTable.Header>
                 </ScrollView>
             </DataTable>
             <View style={styles.elevatedBox}>
@@ -185,6 +223,13 @@ const styles = StyleSheet.create({
         top: -11,
         left: 15,
         right: 0,
+    },
+    average: {
+        fontSize: 10,
+        position: 'absolute',
+        top: -11,
+        // left: 0,
+        right: 15,
     },
     trash: {
         flex: 1,
