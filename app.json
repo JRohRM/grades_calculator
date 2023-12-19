@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "grades",
-    "slug": "grades",
+    "name": "grade-genius",
+    "slug": "grade-genius",
+    "displayName": "Grade Genius",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,7 +17,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.jurrh.grades"
+      "bundleIdentifier": "com.jurrh.gradegenius"
     },
     "android": {
       "adaptiveIcon": {
