@@ -73,11 +73,10 @@ const SetValues = () => {
   const styles = StyleSheet.create({
     input: {
       borderColor: 'gray',
-      ...(Platform.OS === 'android' && {height: 50}),
       width: '100%',
       borderWidth: 2,
       borderRadius: 10,
-      padding: Platform.OS === 'android' ? 0 : 10,
+      padding: 10,
       marginVertical: 10,
     },
     container: {
@@ -128,6 +127,7 @@ const SetValues = () => {
           items={weight}
           onValueChange={value => setWeight(value)}
           value={selWeight}
+          useNativeAndroidPickerStyle={false}
         />
       </View>
       {Platform.OS === 'ios' && (

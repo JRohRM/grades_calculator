@@ -9,18 +9,34 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const jsonFileName = 'database.json';
 const fileURI = `${FileSystem.documentDirectory}${jsonFileName}`;
-const source = require('./assets/graph.png')
+const source = require('./assets/graph.png');
 
 let currentIndex
 
 function Home({ navigation }) {
-    const [JSONData, setJSONData] = useState([]);
+    const [JSONData, setJSONData] = useState(null);
     const [primaryAvg, setPrimaryAvg] = useState("N/A");
     const [secondaryAvg, setSecondaryAvg] = useState("N/A");
     const [globalAvg, setGlobalAvg] = useState("N/A");
 
 
-    useEffect(() => {
+    const refreshData = useCallback(() => {
+        const fetchJSONData = async () => {
+            console.log("fetch");
+            const fileInfo = await FileSystem.getInfoAsync(fileURI);
+            if (fileInfo.exists) {
+                const fileContent = await FileSystem.readAsStringAsync(fileURI);
+                const parsedData = JSON.parse(fileContent);
+                setJSONData(parsedData);
+                calculateAverages(parsedData);
+            }
+        };
+        fetchJSONData()
+    }, []);
+
+    useEffect(
+        useCallback(() => {
+            console.log("useEffect");
 
         EventRegister.addEventListener('goBackHome', () => {
             navigation.navigate('Home')
@@ -31,7 +47,17 @@ function Home({ navigation }) {
             currentIndex = undefined
         });
 
-    }, [navigation]);
+    }, [navigation]));
+
+    useFocusEffect(
+        useCallback(() => {
+            console.log("useFocusEffect");
+            refreshData();
+            return () => {
+                // Optional: Any cleanup logic goes here
+            };
+        }, [refreshData])
+    );
 
     const calculateAverages = (data) => {
         let primaryTotal = 0;
@@ -42,7 +68,7 @@ function Home({ navigation }) {
         let globalCount = 0;
 
         data.forEach(item => {
-            const avg = item.subject.average;
+            let avg = item.subject.average ?? "N/A";
             if (item.subject.weight === 'Primary' && avg !== "N/A") {
                 primaryTotal += avg;
                 primaryCount++;
@@ -61,28 +87,6 @@ function Home({ navigation }) {
         setSecondaryAvg(secondaryCount > 0 ? (secondaryTotal / secondaryCount).toFixed(2) : "N/A");
         setGlobalAvg(globalCount > 0 ? (globalTotal / globalCount).toFixed(2) : "N/A");
     };
-
-    const refreshData = useCallback(() => {
-        const fetchJSONData = async () => {
-            const fileInfo = await FileSystem.getInfoAsync(fileURI);
-            if (fileInfo.exists) {
-                const fileContent = await FileSystem.readAsStringAsync(fileURI);
-                const parsedData = JSON.parse(fileContent);
-                setJSONData(parsedData);
-                calculateAverages(parsedData);
-            }
-        };
-        fetchJSONData()
-    }, []);
-
-    useFocusEffect(
-        useCallback(() => {
-            refreshData();
-            return () => {
-                // Optional: Any cleanup logic goes here
-            };
-        }, [refreshData])
-    );
 
     const goToSetGrades = (index) => {
         navigation.navigate('Grades')
@@ -125,6 +129,10 @@ function Home({ navigation }) {
             ]
         );
     };
+
+    if (!JSONData) {
+        return <View><Text>Loading...</Text></View>
+    }
 
     return (
         <View style={styles.container}>
@@ -193,8 +201,7 @@ function Home({ navigation }) {
                     blurRadius={5} // Adjust the blur radius as needed
                     borderRadius={10}
                 >
-                    {/* You can add additional content over the image here if needed */}
-                </ImageBackground>
+                    </ImageBackground>
                 <TouchableOpacity onPress={() => {goToGraph()}} style={styles.textContainer}>
                     <Text>Monitoring</Text>
                 </TouchableOpacity>

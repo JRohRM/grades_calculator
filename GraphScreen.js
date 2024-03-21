@@ -36,7 +36,6 @@ const GraphScreen = () => {
 
     }
 
-    let barDataItem
     const barData = [];
     JSONData.forEach(data => {
         if (data.subject.average !== undefined) {
