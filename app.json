@@ -24,14 +24,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.jurrh.grades"
+      "package": "com.jurrh.gradegenius"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "f8ea0110-dc3b-48d3-b483-50d4d444cc6f"
+        "projectId": "f366f6f6-2a57-47c5-8842-ed1b7c4e7196"
       }
     }
   }

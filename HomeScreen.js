@@ -5,6 +5,7 @@ import {Ionicons} from '@expo/vector-icons';
 import {EventRegister} from 'react-native-event-listeners';
 import * as FileSystem from 'expo-file-system';
 import { useFocusEffect } from '@react-navigation/native';
+import GraphCard from "./GraphCard"
 
 
 const jsonFileName = 'database.json';
@@ -14,7 +15,7 @@ const source = require('./assets/graph.png');
 let currentIndex
 
 function Home({ navigation }) {
-    const [JSONData, setJSONData] = useState(null);
+    const [JSONData, setJSONData] = useState([]);
     const [primaryAvg, setPrimaryAvg] = useState("N/A");
     const [secondaryAvg, setSecondaryAvg] = useState("N/A");
     const [globalAvg, setGlobalAvg] = useState("N/A");
@@ -22,7 +23,6 @@ function Home({ navigation }) {
 
     const refreshData = useCallback(() => {
         const fetchJSONData = async () => {
-            console.log("fetch");
             const fileInfo = await FileSystem.getInfoAsync(fileURI);
             if (fileInfo.exists) {
                 const fileContent = await FileSystem.readAsStringAsync(fileURI);
@@ -36,7 +36,6 @@ function Home({ navigation }) {
 
     useEffect(
         useCallback(() => {
-            console.log("useEffect");
 
         EventRegister.addEventListener('goBackHome', () => {
             navigation.navigate('Home')
@@ -51,11 +50,7 @@ function Home({ navigation }) {
 
     useFocusEffect(
         useCallback(() => {
-            console.log("useFocusEffect");
             refreshData();
-            return () => {
-                // Optional: Any cleanup logic goes here
-            };
         }, [refreshData])
     );
 
@@ -130,9 +125,7 @@ function Home({ navigation }) {
         );
     };
 
-    if (!JSONData) {
-        return <View><Text>Loading...</Text></View>
-    }
+    let IconComponent = Ionicons;
 
     return (
         <View style={styles.container}>
@@ -142,7 +135,7 @@ function Home({ navigation }) {
                     <DataTable.Title style={styles.cell} numeric>Average</DataTable.Title>
                     <DataTable.Title></DataTable.Title>
                 </DataTable.Header>
-                <ScrollView flexBasis={'50%'}>
+                <ScrollView style={styles.scrollView}>
                     <DataTable.Header style={styles.weight}>
                         <DataTable.Title style={styles.weightTitle}>Primary</DataTable.Title>
                         <DataTable.Title style={styles.average}>{primaryAvg}</DataTable.Title>
@@ -194,16 +187,10 @@ function Home({ navigation }) {
                     </DataTable.Header>
                 </ScrollView>
             </DataTable>
-            <View style={styles.elevatedBox}>
-                <ImageBackground
-                    source={source}
-                    style={styles.image}
-                    blurRadius={5} // Adjust the blur radius as needed
-                    borderRadius={10}
-                >
-                    </ImageBackground>
-                <TouchableOpacity onPress={() => {goToGraph()}} style={styles.textContainer}>
-                    <Text>Monitoring</Text>
+            <View style={styles.linkToMonitoring}>
+                <GraphCard width={350} ></GraphCard>
+                <TouchableOpacity onPress={() => {goToGraph()}} /*style={styles.textContainer}*/>
+                    <IconComponent name={"chevron-forward"} size={50}/>
                 </TouchableOpacity>
             </View>
         </View>
@@ -261,17 +248,24 @@ const styles = StyleSheet.create({
         radius: 10,
     },
     textContainer: {
-        position: "absolute",
+        flex: 1,
         bottom: 0,
         backgroundColor: '#efb810',
-        borderBottomLeftRadius: 10,
-        borderBottomRightRadius: 10,
+        borderRadius: 10,
         width: '112.7%',
         height: '25%',
         justifyContent: 'center',
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
+    },
+    scrollView: {
+        height: '50%'
+    },
+    linkToMonitoring: {
+        marginHorizontal: 15,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 });
 
