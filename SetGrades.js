@@ -31,6 +31,23 @@ function SetGrades() {
     const [examGrade, setExamGrade] = React.useState(null);
     const [examCoefficient, setExamCoefficient] = React.useState(null);
 
+    const handleGradeChange = (value) => {
+
+        const cleanedText = value.replace(/\./g, '');
+
+        let newValue = cleanedText;
+        if (cleanedText.length >= 2) {
+            newValue = cleanedText.substring(0, 1) + '.' + cleanedText.substring(1);
+        }
+
+        const floatValue = parseFloat(newValue);
+        if (!isNaN(floatValue) && floatValue <= 6.0) {
+            setExamGrade(newValue);
+        } else if (cleanedText.length === 0) {
+            setExamGrade('');
+        }
+    };
+
     newData = {
         examName: examName,
         examGrade: examGrade,
@@ -184,7 +201,8 @@ function SetGrades() {
                 placeholder="Grade"
                 keyboardType="numeric"
                 style={styles.input}
-                onChangeText={number => setExamGrade(number)}
+                onChangeText={number => handleGradeChange(number)}
+                maxLength={3}
                 value={examGrade}
             />
             <TextInput

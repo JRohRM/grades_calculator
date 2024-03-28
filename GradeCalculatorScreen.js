@@ -71,7 +71,6 @@ const GradeCalculatorScreen = ({navigation}) => {
   }
 
   const addGrade = () => {
-    console.log("hello World")
     goToSetCalculatedGrades()
   }
 

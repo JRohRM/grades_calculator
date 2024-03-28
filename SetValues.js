@@ -175,7 +175,9 @@ async function addValuesToJSONFile() {
     } else {
       newData.index = existingData.length;
       newData.subject.exams = [];
-      newData.average = null;
+      newData.subject.goal = 4.5
+      newData.subject.goalRange = 2
+      newData.subject.average = null;
       existingData.push(newData);
     }
 

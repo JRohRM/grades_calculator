@@ -188,7 +188,7 @@ function Home({ navigation }) {
                 </ScrollView>
             </DataTable>
             <View style={styles.linkToMonitoring}>
-                <GraphCard width={350} ></GraphCard>
+                <GraphCard width={350}/>
                 <TouchableOpacity onPress={() => {goToGraph()}} /*style={styles.textContainer}*/>
                     <IconComponent name={"chevron-forward"} size={50}/>
                 </TouchableOpacity>
@@ -222,7 +222,6 @@ const styles = StyleSheet.create({
         fontSize: 10,
         position: 'absolute',
         top: -11,
-        // left: 0,
         right: 15,
     },
     trash: {

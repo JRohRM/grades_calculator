@@ -5,6 +5,8 @@
       "name": "Math",
       "average": 5.2,
       "weight": "Principal",
+      "goal": 4,
+      "goalRange": 4,
       "exams": [
         {
           "examId": "0",

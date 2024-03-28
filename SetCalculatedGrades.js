@@ -16,6 +16,23 @@ function SetCalculatedGrades({navigation, route}) {
     const [examGrade, setExamGrade] = useState(grade);
     const [examCoefficient, setExamCoefficient] = useState(null);
 
+    const handleGradeChange = (value) => {
+
+        const cleanedText = value.replace(/\./g, '');
+
+        let newValue = cleanedText;
+        if (cleanedText.length >= 2) {
+            newValue = cleanedText.substring(0, 1) + '.' + cleanedText.substring(1);
+        }
+
+        const floatValue = parseFloat(newValue);
+        if (!isNaN(floatValue) && floatValue <= 6.0) {
+            setExamGrade(newValue);
+        } else if (cleanedText.length === 0) {
+            setExamGrade('');
+        }
+    };
+
     const fetchJSONData = async () => {
         const fileInfo = await FileSystem.getInfoAsync(fileURI);
         if (fileInfo.exists) {
@@ -181,7 +198,8 @@ function SetCalculatedGrades({navigation, route}) {
                     placeholder="Grade"
                     keyboardType="numeric"
                     style={styles.input}
-                    onChangeText={(text) => setExamGrade(text)}
+                    onChangeText={(text) => handleGradeChange(text)}
+                    maxLength={3}
                     value={String(examGrade)}
                 />
                 <TextInput

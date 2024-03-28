@@ -46,7 +46,7 @@ const GraphCard = (props) => {
 
     const barData = [];
     JSONData.forEach(data => {
-        if (data.subject.average !== undefined) {
+        if (data.subject.average !== null) {
             barData.push({
                 label: data.subject.name,
                 value: data.subject.average,
