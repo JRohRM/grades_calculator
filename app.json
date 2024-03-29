@@ -2,7 +2,7 @@
   "expo": {
     "name": "Grade Genius",
     "slug": "grade-genius",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,6 +16,7 @@
     ],
     "ios": {
       "supportsTablet": true,
+      "buildNumber": "2",
       "bundleIdentifier": "com.jurrh.gradegenius"
     },
     "android": {
@@ -23,6 +24,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "versionCode": 2,
       "package": "com.jurrh.gradegenius"
     },
     "web": {
