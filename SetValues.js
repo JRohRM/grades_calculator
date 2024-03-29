@@ -4,8 +4,10 @@ import {
   Button,
   StyleSheet,
   TextInput,
+  TouchableWithoutFeedback,
   Alert,
   Platform,
+  Keyboard,
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import * as FileSystem from 'expo-file-system';
@@ -110,6 +112,7 @@ const SetValues = () => {
 
 
   return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
       <KeyboardAwareScrollView>
       <View style={styles.elevatedBox}>
@@ -149,6 +152,7 @@ const SetValues = () => {
       </View>
       </KeyboardAwareScrollView>
     </View>
+      </TouchableWithoutFeedback>
   );
 }
 

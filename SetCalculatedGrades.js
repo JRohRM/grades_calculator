@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, View,} from 'react-native';
+import {Alert, Button, Keyboard, Platform, StyleSheet, Text, TextInput, View, TouchableWithoutFeedback} from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import RNPickerSelect from 'react-native-picker-select';
 const jsonFileName = 'database.json';
@@ -174,6 +174,7 @@ function SetCalculatedGrades({navigation, route}) {
     })
 
     return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
             <View style={styles.elevatedBox}>
                 <Text style={{fontSize: 22}}>Type in a new exam:</Text>
@@ -228,6 +229,7 @@ function SetCalculatedGrades({navigation, route}) {
             </View>
             <View paddingVertical={8} />
         </View>
+        </TouchableWithoutFeedback>
     )
 }
 

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, View,} from 'react-native';
+import {Alert, Button, Keyboard, Platform, ScrollView, StyleSheet, Text, TextInput, View, TouchableWithoutFeedback} from 'react-native';
 import {DataTable} from 'react-native-paper';
 import * as FileSystem from 'expo-file-system';
 import {currentIndex} from './HomeScreen'
@@ -188,6 +188,7 @@ function SetGrades() {
     });
 
     return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
                 <View style={styles.elevatedBox}>
             <Text style={{fontSize: 22}}>Type in a new exam:</Text>
@@ -256,6 +257,7 @@ function SetGrades() {
                     </ScrollView>
                 </DataTable>
         </View>
+        </TouchableWithoutFeedback>
     )
 }
 

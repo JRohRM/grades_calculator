@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, StyleSheet, Text, TextInput, ScrollView} from 'react-native';
+import {View, StyleSheet, Text, TextInput, Keyboard, TouchableWithoutFeedback} from 'react-native';
 import * as FileSystem from "expo-file-system";
 import { useFocusEffect } from '@react-navigation/native';
 import GraphCard from "./GraphCard"
@@ -200,6 +200,7 @@ const GraphScreen = () => {
         },
     })
     return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
         <View style={{padding: 20}}>
             <GraphCard/>
@@ -251,6 +252,7 @@ const GraphScreen = () => {
             autoPlay={false}
         />
     </View>
+        </TouchableWithoutFeedback>
     );
 };
 

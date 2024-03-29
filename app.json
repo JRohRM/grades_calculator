@@ -1,8 +1,7 @@
 {
   "expo": {
-    "name": "grade-genius",
+    "name": "Grade Genius",
     "slug": "grade-genius",
-    "displayName": "Grade Genius",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
